@@ -23,10 +23,25 @@ Le projet est concu en HTML, CSS et JavaScript sans build ni dependance npm.
 - schema de dimensions et saisie guidee
 - remplissage d'un PDF ROMUS via `pdf-lib`
 
+## Exemples visuels
+
+### Vue d'ensemble
+
+![Apercu du formulaire](images/tapis-romus.png)
+
+### Formulaire multi-etapes
+
+![Exemple du formulaire](images/tapis-romus-formulaire.png)
+
+### Saisie des mesures
+
+![Exemple de la zone dimensions](images/tapis-romus-mesures.png)
+
 ## Structure
 
 - `index.html` : interface complete, styles et logique JavaScript
 - `logo.png` : logo affiche dans l'en-tete, remplacable pour integrer le formulaire a un autre site
+- `images/` : captures d'ecran d'exemple utilisees dans le README
 - `pdf-lib.min.js` : bibliotheque utilisee pour remplir et exporter le PDF
 - `BON DE COMMANDE TAPIS ROMUS_AOUT2025.pdf` : document source de reference
 
