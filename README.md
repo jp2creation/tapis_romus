@@ -26,8 +26,15 @@ Le projet est concu en HTML, CSS et JavaScript sans build ni dependance npm.
 ## Structure
 
 - `index.html` : interface complete, styles et logique JavaScript
+- `logo.png` : logo affiche dans l'en-tete, remplacable pour integrer le formulaire a un autre site
 - `pdf-lib.min.js` : bibliotheque utilisee pour remplir et exporter le PDF
 - `BON DE COMMANDE TAPIS ROMUS_AOUT2025.pdf` : document source de reference
+
+## Personnalisation
+
+Le logo peut etre remplace facilement en modifiant le fichier `logo.png`.
+
+Cela permet d'integrer ce formulaire a l'identite visuelle d'un client ou de l'adapter a leur site internet ou a un usage interne sans modifier le fonctionnement principal de l'application.
 
 ## Utilisation
 
