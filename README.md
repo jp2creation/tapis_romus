@@ -29,27 +29,6 @@ Le projet est concu en HTML, CSS et JavaScript sans build ni dependance npm.
 - `pdf-lib.min.js` : bibliotheque utilisee pour remplir et exporter le PDF
 - `BON DE COMMANDE TAPIS ROMUS_AOUT2025.pdf` : document source de reference
 
-## Lancement local
-
-Aucune installation n'est necessaire.
-
-Option 1 :
-
-- ouvrir directement `index.html` dans un navigateur
-
-Option 2 :
-
-- lancer un petit serveur local :
-
-```bash
-cd /Users/jean-philippe/Documents/Codex/Romus
-python3 -m http.server 8000
-```
-
-Puis ouvrir :
-
-- [http://localhost:8000](http://localhost:8000)
-
 ## Utilisation
 
 1. Choisir `COMMANDE n°` ou `DEMANDE DE DEVIS`
