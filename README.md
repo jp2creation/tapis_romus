@@ -2,6 +2,12 @@
 
 Application web statique pour saisir un bon de commande ROMUS de tapis d'entree sur mesure et generer un PDF rempli directement depuis le navigateur.
 
+## Demo
+
+Acces direct a la demonstration en ligne :
+
+[https://jp2creation.github.io/tapis_romus/](https://jp2creation.github.io/tapis_romus/)
+
 ## Apercu
 
 Le projet propose un formulaire multi-etapes avec :
