@@ -1555,12 +1555,22 @@ async function generatePdf() {
   const existingPdfBytes = Uint8Array.from(atob(TEMPLATE_PDF_BASE64), c => c.charCodeAt(0));
   const pdfDoc = await PDFDocument.load(existingPdfBytes);
   const form = pdfDoc.getForm();
+  const page = pdfDoc.getPages()[0];
+  const regularFont = await pdfDoc.embedFont(PDFLib.StandardFonts.Helvetica);
+  const boldFont = await pdfDoc.embedFont(PDFLib.StandardFonts.HelveticaBold);
 
   const setText = (name, value) => {
     try {
       form.getTextField(name).setText(value || '');
     } catch (e) {
       console.warn('Champ texte introuvable:', name, e);
+    }
+  };
+  const setFontSize = (name, size) => {
+    try {
+      form.getTextField(name).setFontSize(size);
+    } catch (e) {
+      console.warn('Taille de police introuvable pour le champ:', name, e);
     }
   };
   const setCheck = (name, checked) => {
@@ -1578,6 +1588,13 @@ async function generatePdf() {
       console.warn('Radio introuvable:', name, e);
     }
   };
+  const fitTextSize = (font, text, maxWidth, preferredSize, minSize = 7) => {
+    let size = preferredSize;
+    while (size > minSize && font.widthOfTextAtSize(text, size) > maxWidth) {
+      size -= 0.5;
+    }
+    return size;
+  };
 
   setRadio('Commande ou devis', data.commandeOuDevis === 'commande' ? 'Choix1' : 'Choix2');
   setText('Date', formatDateFr(data.date));
@@ -1588,22 +1605,6 @@ async function generatePdf() {
   setText(' Tél', data.tel);
   setText(' Fax', data.email); // ce champ correspond visuellement à la ligne Email sur le PDF source
   setText(' Réf Chantier', data.refChantier);
-
-  if (data.commandeOuDevis === 'commande' && data.numeroCommande) {
-    try {
-      const page = pdfDoc.getPages()[0];
-      const font = await pdfDoc.embedFont(PDFLib.StandardFonts.HelveticaBold);
-      page.drawText(data.numeroCommande, {
-        x: 184,
-        y: 780,
-        size: 10,
-        font,
-        color: PDFLib.rgb(1, 1, 1),
-      });
-    } catch (e) {
-      console.warn('Impossible d’ajouter le numéro de commande au PDF', e);
-    }
-  }
 
   setText('ModèleTapis', data.modeleTapis);
   setText('RéfTapis', data.refTapis);
@@ -1618,11 +1619,26 @@ async function generatePdf() {
   setText('RéfPattes de fixation', data.refPattes);
   setText('QuantitéPattes de fixation', data.qtePattes);
 
+  [
+    'ModèleTapis',
+    'RéfTapis',
+    'QuantitéTapis',
+    'ModèleCadre',
+    'RéfCadre',
+    'QuantitéCadre',
+    'ModèleEquerres',
+    'RéfEquerres',
+    'QuantitéEquerres',
+    'ModèlePattes de fixation',
+    'RéfPattes de fixation',
+    'QuantitéPattes de fixation',
+  ].forEach(name => setFontSize(name, 9));
+
   setText('Longueur L1', data.l1);
   setText('Longueur L2', data.l2);
   setText('Profondeur P1', data.p1);
   setText('Profondeur P2', data.p2);
-  setText('Dimension Exact', data.diagonale);
+  setText('Dimension Exact', '');
 
   setCheck('Dimensions exactes du tapis à fabriquer', data.dimensionType === 'exact');
   setCheck('Dimensions prises à lintérieur du cadre1', data.dimensionType === 'interieur');
@@ -1637,6 +1653,43 @@ async function generatePdf() {
   setText('Dimension Int', data.dimensionType === 'interieur' ? 'Oui' : '');
 
   try { form.flatten(); } catch (e) { console.warn('Flatten non appliqué', e); }
+
+  if (data.commandeOuDevis === 'commande' && data.numeroCommande) {
+    try {
+      const text = data.numeroCommande;
+      const size = fitTextSize(boldFont, text, 76, 10, 8);
+      page.drawText(text, {
+        x: 214,
+        y: 777.2,
+        size,
+        font: boldFont,
+        color: PDFLib.rgb(0.1, 0.1, 0.1),
+      });
+    } catch (e) {
+      console.warn('Impossible d’ajouter le numéro de commande au PDF', e);
+    }
+  }
+
+  if (data.diagonale) {
+    try {
+      const text = data.diagonale;
+      const boxX = 148;
+      const boxY = 266;
+      const boxHeight = 19.843;
+      const valueAreaWidth = 44;
+      const size = fitTextSize(regularFont, text, valueAreaWidth, 10, 7.5);
+      const textWidth = regularFont.widthOfTextAtSize(text, size);
+      page.drawText(text, {
+        x: boxX + ((valueAreaWidth - textWidth) / 2) + 3,
+        y: boxY + ((boxHeight - size) / 2) + 1,
+        size,
+        font: regularFont,
+        color: PDFLib.rgb(0.1, 0.1, 0.1),
+      });
+    } catch (e) {
+      console.warn('Impossible d’ajouter la diagonale au PDF', e);
+    }
+  }
 
   const pdfBytes = await pdfDoc.save();
   const blob = new Blob([pdfBytes], { type: 'application/pdf' });
